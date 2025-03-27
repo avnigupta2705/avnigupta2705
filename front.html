@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharma Expense Validator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        body {
+            background: linear-gradient(to right, #8c9ef0, #8656b7);
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            margin-top: 50px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        #preview img {
+            width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            background: #5563c1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">Pharma Expense Validator</h1>
+        
+        <!-- File Upload -->
+        <label class="block text-gray-700 font-medium mb-2">Upload Your Bill (Excel):</label>
+        <input type="file" id="fileInput" accept=".jpg, .jpeg, .png, .pdf, .xlsx, .csv" 
+            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400">
+
+        <!-- Preview -->
+        <div id="preview" class="mt-4"></div>
+
+        <!-- Validation Message -->
+        <p id="message" class="text-red-500 font-semibold mt-2"></p>
+
+        <!-- Button -->
+        <button onclick="processFile()" class="btn mt-4">Validate Bill</button>
+    </div>
+
+    <script>
+        let uploadedFiles = new Set(); // Store uploaded bills to prevent duplicates
+
+        function processFile() {
+            const fileInput = document.getElementById("fileInput");
+            const message = document.getElementById("message");
+            const preview = document.getElementById("preview");
+
+            if (!fileInput.files.length) {
+                message.textContent = "Please upload a file.";
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const fileName = file.name;
+            const fileType = file.type;
+
+            // Prevent Duplicate Files
+            if (uploadedFiles.has(fileName)) {
+                message.textContent = "Duplicate bill detected!";
+                return;
+            }
+
+            uploadedFiles.add(fileName);
+            message.textContent = ""; // Clear error message
+            preview.innerHTML = ""; // Clear previous preview
+
+            // Show Preview
+            if (fileType.startsWith("image")) {
+                const img = document.createElement("img");
+                img.src = URL.createObjectURL(file);
+                img.classList.add("mt-2", "rounded-md");
+                preview.appendChild(img);
+            } else if (fileType === "application/pdf") {
+                preview.innerHTML = `<p class="text-gray-700 mt-2 font-semibold">📄 PDF Uploaded: ${fileName}</p>`;
+            } else if (fileName.endsWith(".xlsx") || fileName.endsWith(".csv")) {
+                preview.innerHTML = `<p class="text-gray-700 mt-2 font-semibold">📊 Excel File Uploaded: ${fileName}</p>`;
+            } else {
+                message.textContent = "Invalid file type!";
+            }
+        }
+    </script>
+
+</body>
+</html>
